@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
+.center {
+@apply align-middle justify-center items-center content-center;
+}
+.justified {
+@apply justify-center;
+}
+.aligned {
+@apply align-middle items-center content-center;
+}
+
+@font-face {
+  font-family: Montserrat;
+  src: url(../public/fonts/Montserrat-Regular.ttf);
+}
+@font-face {
+  font-family: MontserratDemi;
+  src: url(../public/fonts/Montserrat-Medium.ttf);
+}
+@font-face {
+  font-family: MontserratExtraBold;
+  src: url(../public/fonts/Montserrat-ExtraBold.ttf);
+}
+
+@font-face {
+  font-family: MontserratBold;
+  src: url(../public/fonts/Montserrat-Bold.ttf);
+}
+@font-face {
+  font-family: MontesseratBoldItalic;
+  src: url(../public/fonts/Montserrat-BoldItalic.ttf);
+}
