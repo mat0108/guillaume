@@ -1,0 +1,79 @@
+@import "tailwindcss";
+@font-face {
+  font-family: Montserrat;
+  src: url(./assets/fonts/Montserrat-Regular.ttf);
+}
+@font-face {
+  font-family: MontserratDemi;
+  src: url(./assets/fonts/Montserrat-Medium.ttf);
+}
+@font-face {
+  font-family: MontserratExtraBold;
+  src: url(./assets/fonts/Montserrat-ExtraBold.ttf);
+}
+
+@font-face {
+  font-family: MontserratBold;
+  src: url(./assets/fonts/Montserrat-Bold.ttf);
+}
+@font-face {
+  font-family: MontesseratBoldItalic;
+  src: url(./assets/fonts/Montserrat-BoldItalic.ttf);
+}
+@utility center {
+  @apply justify-center items-center content-center;
+}
+
+@utility justified {
+  @apply justify-center;
+}
+
+@utility aligned {
+  @apply items-center content-center;
+}
+
+
+@theme {
+  --font-mt: Montserrat, "sans-serif";
+  --font-mt-demi: MontserratDemi, "sans-serif";
+  --font-mt-bold: MontserratBold, "sans-serif";
+  --font-mt-extra-bold: MontserratExtraBold, "sans-serif";
+  --font-mt-bold-italic: MontesseratBoldItalic, "sans-serif";
+  --color-darkBlue: #31344e;
+  --color-lightBlue: #4c75ff;
+  --color-blackDarked: #201F25;
+  --color-black: #000000;
+  --color-grayBlack: #535252;
+  --color-trueWhite: #ffffff;
+  --color-white: #ebead8;
+  --color-whiteBlue: #b8c6f5;
+  --color-darkGreen: #072e2d;
+  --color-grey: #86857F;
+  --color-blackGrey: #2C2D33;
+  --color-darkGrey: #535252;
+  --color-lightGray: #b8b7ab;
+  --color-blueGrey: #46485A;
+  --color-blue: #4C75FF;
+  --color-blueLight: #b8c6f5;
+  --color-brownDark: #4e4b31;
+  --color-brown: #828069;
+  --color-brownLight: #B7B5A0;
+  --color-greenDarked: #072E25;
+  --color-greenDark: #245F36;
+  --color-green: #419047;
+  --color-greenLight: #96BD90;
+  --color-yellowDark: #E8C345;
+  --color-yellow: #FFD64C;
+  --color-yellowLight: #F5E092;
+  --color-redDark: #9C2525;
+  --color-redDark2: #5e0e0e;
+  --color-red: #BD2D2D;
+  --color-redLight: #CC6C66;
+  --color-rose: #DCAB9F;
+  --color-bluePoskin: #264C4D;
+  --color-whiteCoffee: #E4DDD3;
+  --color-whiteSmoke: #EEE8E4;
+  --color-cyan: #83C5BE;
+  --color-cyanMedium: #346C6D;
+  --color-lightBlueAccent: #618CDC;
+}
