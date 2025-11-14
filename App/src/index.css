@@ -32,48 +32,57 @@
   @apply items-center content-center;
 }
 
-
+@layer utilities {
+  .column-span-2 {
+    column-span: 2;
+  }
+}
 @theme {
+  --text-xs:0.75rem;
+  --text-2xs: 0.6rem;
+  --text-3xs: 0.4rem;
   --font-mt: Montserrat, "sans-serif";
   --font-mt-demi: MontserratDemi, "sans-serif";
   --font-mt-bold: MontserratBold, "sans-serif";
   --font-mt-extra-bold: MontserratExtraBold, "sans-serif";
   --font-mt-bold-italic: MontesseratBoldItalic, "sans-serif";
-  --color-darkBlue: #31344e;
-  --color-lightBlue: #4c75ff;
+  --color-darkBlue: #2B4999;
+  --color-spaceBlue:#232A42;
+  --color-delftBlue: #26345F;
+  --color-steelBlue: #417FB5;
+  --color-lightBlue: #56B5D1;
   --color-blackDarked: #201F25;
   --color-black: #000000;
+  --color-night: #101013;
+  --color-lightGray: #b8b7ab;
   --color-grayBlack: #535252;
+  --color-jetGray: #3C3B41;
   --color-trueWhite: #ffffff;
   --color-white: #ebead8;
-  --color-whiteBlue: #b8c6f5;
-  --color-darkGreen: #072e2d;
-  --color-grey: #86857F;
-  --color-blackGrey: #2C2D33;
-  --color-darkGrey: #535252;
-  --color-lightGray: #b8b7ab;
-  --color-blueGrey: #46485A;
-  --color-blue: #4C75FF;
-  --color-blueLight: #b8c6f5;
-  --color-brownDark: #4e4b31;
-  --color-brown: #828069;
-  --color-brownLight: #B7B5A0;
-  --color-greenDarked: #072E25;
-  --color-greenDark: #245F36;
-  --color-green: #419047;
-  --color-greenLight: #96BD90;
-  --color-yellowDark: #E8C345;
-  --color-yellow: #FFD64C;
-  --color-yellowLight: #F5E092;
-  --color-redDark: #9C2525;
-  --color-redDark2: #5e0e0e;
   --color-red: #BD2D2D;
-  --color-redLight: #CC6C66;
-  --color-rose: #DCAB9F;
-  --color-bluePoskin: #264C4D;
-  --color-whiteCoffee: #E4DDD3;
-  --color-whiteSmoke: #EEE8E4;
-  --color-cyan: #83C5BE;
-  --color-cyanMedium: #346C6D;
-  --color-lightBlueAccent: #618CDC;
+  --color-snow: #B5B2AA;
+  --color-mainColor: #201F25;
+  --color-secondColor: #535252;
+  --color-textColor: #ffffff;
+  --color-hoverColor: #56B5D1;
+  
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #26232e; /* black */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #46485A; /* Indigo-600 */
+  border-radius: 10px;
+  
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #46485A; /* Indigo-700 */
 }
