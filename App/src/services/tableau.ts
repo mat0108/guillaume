@@ -32,7 +32,6 @@ export const getTableauById = async ({id}:{id:string}) => {
     return res.data;
 }
 export const getTableauByExpo = async (body:{expo:string,page:number,limit:number}):Promise<tableauResponse>=>{
-    console.log('apiUrl : ', apiUrl)
     const res = await axios.post<tableauResponse>(`${apiUrl}/tableau/getByExpo`,body);
     return res.data;
 }

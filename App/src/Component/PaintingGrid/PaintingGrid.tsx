@@ -9,7 +9,8 @@ type PaintingGridProps = {
 }
 const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
     const [tableaux,setTableaux] = useState<tableau[]>([]);
-    const [tableau,setTableau] = useState<tableau | null>()
+    const [tableau,setTableau] = useState<tableau | null>();
+    const [tableauBG,setTableauBG] = useState<string | null>(null)
     const [page,setPage] = useState(1);
     const [total,setTotal] = useState<number>(0);
     const [loading,setLoading] = useState(false);
@@ -39,7 +40,6 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
     useEffect(()=>{
         async function fetchData(){
             const data = await getExpoCount(expo);
-            console.log('data.total : ', data.total)
             setTotal(data.total);
         } 
         fetchData()
@@ -53,7 +53,6 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
                 setTableaux([]); // reset before fetching
 
                 const pages = Math.ceil(total / limit);
-                console.log('pages : ', pages)
                 const fetchPromises = [];
 
                 for (let i = 1; i <= pages; i++) {
@@ -66,7 +65,6 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
 
                 try {
                     const results = await Promise.all(fetchPromises);
-                    console.log('results  : ', results )
                     // flatten all tableaux into one array
                     const allTableaux = results.flatMap(res => res.tableaux);
                     setTableaux(allTableaux);
@@ -81,34 +79,35 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
             if(total > 0 && limit){fetchAll();}
         }
     }, [total, expo, limit]);
-    function BackItem({item}:{item:tableau}){
-        return <div  className={`max-w-[50vw]  relative flex flex-col p-4 rounded-2xl bg-lightGray flex center`} onClick={()=>{setIsOpen(false)}}>
-            <p className="font-mt-bold mt-2 text-center"> {item.titre}</p>
-            <div className={`flex flex-row justify-around ${item.dim_cadre ? "w-[80%]":"w-[70%]"}`}>
-                    <p>dimension oeuvre : {item.dim_oeuvre}</p>
-                    {item.dim_cadre && <p>dimension cadre : {item.dim_cadre}</p>}
+    function BackItem({item,background}:{item:tableau,background:string}){
+        return <div  className={`max-w-[90vw] lg:max-w-[50vw]  relative flex flex-col p-4 rounded-2xl ${background ?? 'bg-lightGray'} flex center`} onClick={()=>{setIsOpen(false)}}>
+            <p className="font-mt-bold lg:mt-2 text-center text-xs lg:text-lg"> {item.titre}</p>
+            <div className={`flex flex-row justify-around text-3xs lg:text-base ${item.dim_cadre ? "w-[100%] lg:w-[80%]":"w-[90%] lg:w-[75%]"}`}>
+                    <p>dim. oeuvre : {item.dim_oeuvre}</p>
+                    {item.dim_cadre && <p>dim. cadre : {item.dim_cadre}</p>}
                     <p>technique : {item.technique}</p>
                 </div>
                 <img src={item?.imageBase64.imageBase64} alt={item.titre} className="w-full max-h-[80vh]"/>
             
 
-            <div className="absolute bottom-3 right-2 w-5 h-5"><img src={"/images/close.webp"} alt={"close"}/></div>
+                <div className="absolute bottom-2 lg:bottom-3 right-2 w-2 lg:w-5 h-2 lg:h-5"><img src={"/images/close.webp"} alt={"close"}/></div>
          </div > 
     }
 
 
-    function onFullScreen(tableau:tableau){
-        setTableau(tableau);
+    function onFullScreen({item,bg}:{item:tableau,bg:string}){
+        setTableau(item);
         setIsOpen(true);
+        setTableauBG(bg)
         
     }
     const FrontItems  = useMemo(()=>{
         return tableaux?.map((tableau,pos)=>
-         <div className={`relative flex flex-col pb-2 rounded-2xl  flex center w-full z-[10] ${pos % 2 ? "bg-white" : "bg-snow"}`} onClick={()=>{onFullScreen(tableau)}}>
+         <div className={`relative flex flex-col pb-2 rounded-2xl  flex center w-full z-[10] ${pos % 2 ? "bg-white" : "bg-snow"}`} onClick={()=>{onFullScreen({item:tableau,bg:`${pos % 2 ? "bg-white" : "bg-snow"}`})}}>
 
             <img src={tableau.imageBase64.imageBase64} alt={tableau._id} className="w-full h-fit rounded-t-lg z-[10]"/>
-            <p className="font-mt-bold mt-2 text-center z-[10]"> {tableau.titre}</p>
-            <img src={"/images/fullscreen.webp"} alt={"fullscreen"} className="absolute bottom-3 right-2 w-5 h-5 z-[10]" />
+            <p className="font-mt-bold mt-2 text-center text-2xs lg:text-base z-[10]"> {tableau.titre}</p>
+            <img src={"/images/fullscreen.webp"} alt={"fullscreen"} className="absolute bottom-3 right-2 w-2 lg:w-5 w-2 lg:h-5 z-[10]" />
             </div> 
         )
     },[tableaux])
@@ -117,14 +116,14 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
         {background}
         <div className="w-screen">
 
-            {loading && <div className="w-full h-[400px] flex center"><Loading darkMode /></div>}
+            {loading && <div className="w-full h-[200px] flex center"><Loading darkMode /></div>}
             {!loading && <ResponsiveMasonry 
                 columnsCountBreakPoints={{768: 2, 996: 3, 1200: 4, 1900:5 }} >
                 <Masonry gutter="32px">{FrontItems}</Masonry>
             </ResponsiveMasonry>}
             <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
-            <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-                <DialogPanel>{tableau && BackItem({item:tableau})}</DialogPanel> 
+            <div className="fixed inset-0 flex w-screen flex items-center justify-center p-1 lg:p-4">
+                <DialogPanel>{tableau && tableauBG && BackItem({item:tableau,background:tableauBG})}</DialogPanel> 
                     
                 
             </div>
