@@ -5,13 +5,8 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(),tailwindcss()],
   server: {
-    host: true,               // accessible depuis réseau local
-    port: 5173,
-    hmr: {
-      protocol: 'wss',        // WebSocket sécurisé
-      host: '0.0.0.0',        // autorise tous les devices
-      clientPort: 5173
+    watch:{
+      usePolling:true
     },
-    allowedHosts: ['panels-patent-eugene-collectors.trycloudflare.com']       // autorise tous les tunnels
   }
 })

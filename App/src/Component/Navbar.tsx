@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router";
+import { UserProps } from "../Screens/Admin/Admin_main";
+import { useCookies } from "react-cookie";
 export function LinkButton(text:string,to:string){
         return <Link to={to} className="flex center text-2xs lg:text-xl text-nowrap font-mt-bold text-textColor  border-2 border-textColor hover:text-hoverColor hover:border-hoverColor rounded-2xl px-1 lg:px-4 bg-secondColor">{text}</Link>
 }
@@ -11,8 +13,10 @@ const Navbar = ({scrollRef}:NavbarProps) => {
     
     const [background, setBackground] = useState("bg-transparent");
     const location = useLocation()
+    const [cookies,setCookies] = useCookies<"user",UserProps>(["user"])
+    
     useEffect(() => {
-        if (location.pathname === "/expos" || location.pathname === "/apropos") {
+        if (location.pathname === "/expos" || location.pathname === "/apropos" ||  /^\/admin(\/.*)?$/.test(location.pathname)) {
             setBackground("bg-mainColor");
             return;
         }else{
@@ -35,14 +39,24 @@ const Navbar = ({scrollRef}:NavbarProps) => {
         return () => el.removeEventListener("scroll", handleScroll);
     }, [location.pathname, scrollRef]);
 
+    const element = useMemo(()=>{
+        if(cookies && cookies.user && cookies.user.isLogin &&  /^\/admin(\/.*)?$/.test(location.pathname)){
+            return <div className="flex gap-2 lg:gap-20">
+                {LinkButton("Admin  : Expositions","/admin/expos")}
+                {LinkButton("Admin  : Tableaux","/admin/tableaux")}
+            </div>
+        }else{
+            return <div className="flex gap-2 lg:gap-20">
+                {LinkButton("Mes expositions","/expos")}
+                {LinkButton("Qui je suis","/apropos")}
+            </div>
+        }
+    },[cookies,location.pathname])
     return (
         <div className={`w-full flex center ${background}`}>
         <div className={`flex flex-row justify-between p-2 w-[98%] lg:w-[90%] `}>
             <Link to="/"  className="text-base lg:text-4xl font-mt-bold text-darkBlue ">{true ? "Guillaume Barnabé":""}</Link>
-            <div className="flex gap-2 lg:gap-20">
-                {LinkButton("Mes expositions","/expos")}
-                {LinkButton("Qui je suis","/apropos")}
-            </div>
+            {element}
         </div>
         </div>
     )

@@ -14,6 +14,7 @@ export type tableau = {
     prix:  string;
     expos: string[],
     imageBase64: imageTableau;
+    date: string;
 }
 
 export type tableauResponse = {
@@ -29,7 +30,7 @@ export const getTableaux = async (body:{page:number,limit:number}): Promise<tabl
 
 export const getTableauById = async ({id}:{id:string}) => {
     const res = await axios.get(`${apiUrl}/tableau/getById/${id}`);
-    return res.data;
+    return res;
 }
 export const getTableauByExpo = async (body:{expo:string,page:number,limit:number}):Promise<tableauResponse>=>{
     const res = await axios.post<tableauResponse>(`${apiUrl}/tableau/getByExpo`,body);
@@ -59,4 +60,18 @@ export const getImageById = async ({id}:{id:string}) => {
 export const getExpoCount = async(exponame?:string) =>{
     const res = await axios.post(`${apiUrl}/tableau/counts`,{expo:exponame})
     return res.data;
+}
+export const updateTableau = async({tableauId,body}:{tableauId?:string,body:any}) =>{
+    const res = await axios.post(`${apiUrl}/tableau/${tableauId}/update`,body)
+    return res;
+}
+export const rotateTableau = async({tableauId,angle}:{tableauId?:string,angle:number}) =>{
+    const res = await axios.post(`${apiUrl}/tableau/${tableauId}/rotate`,{angle:angle})
+    return res;
+}
+export const UpdateAfficheExpo = async ({tableauId,file}:{tableauId:string,file:File}) => {
+    const form = new FormData();
+    form.append("file", file);
+    const res = await axios.post(`${apiUrl}/tableau/${tableauId}/updateTableau`,form,{headers: { "Content-Type": "multipart/form-data" }})
+    return res;
 }

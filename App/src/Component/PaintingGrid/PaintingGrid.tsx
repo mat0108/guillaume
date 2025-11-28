@@ -3,8 +3,9 @@ import { getExpoCount, getTableauByExpo, getTableaux, tableau } from "../../serv
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { Dialog, DialogPanel } from '@headlessui/react'
 import Loading from "../Loading/Loading";
+import { Expo } from "../../services/expo";
 type PaintingGridProps = {
-    expo?: string
+    expo?: Expo; 
     background?: ReactNode;
 }
 const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
@@ -18,28 +19,11 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
     const [isOpen,setIsOpen] = useState(false);
     const breakpoints:any = { 480: 1, 768: 2, 996: 3, 1200: 4, 1900: 5 };
 
-    function getValueFromWidth(width = window.innerWidth) {
-    const sorted = Object.keys(breakpoints)
-        .map(Number)
-        .sort((a, b) => a - b);
-
-    let value = breakpoints[sorted[0]];
-
-    for (const bp of sorted) {
-        if (width >= bp) {
-        value = breakpoints[bp];
-        } else {
-        break;
-        }
-    }
-
-    return value;
-    }
     
     
     useEffect(()=>{
         async function fetchData(){
-            const data = await getExpoCount(expo);
+            const data = await getExpoCount(expo?.title);
             setTotal(data.total);
         } 
         fetchData()
@@ -57,7 +41,7 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
 
                 for (let i = 1; i <= pages; i++) {
                     if (expo) {
-                        fetchPromises.push(getTableauByExpo({ expo, page: i, limit }));
+                        fetchPromises.push(getTableauByExpo({ expo:expo.title, page: i, limit }));
                     } else {
                         fetchPromises.push(getTableaux({ page: i, limit }));
                     }
@@ -83,30 +67,37 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
         return <div  className={`max-w-[90vw] lg:max-w-[50vw]  relative flex flex-col p-4 rounded-2xl ${background ?? 'bg-lightGray'} flex center`} onClick={()=>{setIsOpen(false)}}>
             <p className="font-mt-bold lg:mt-2 text-center text-xs lg:text-lg"> {item.titre}</p>
             <div className={`flex flex-row justify-around text-3xs lg:text-base ${item.dim_cadre ? "w-[100%] lg:w-[80%]":"w-[90%] lg:w-[75%]"}`}>
-                    <p>dim. oeuvre : {item.dim_oeuvre}</p>
-                    {item.dim_cadre && <p>dim. cadre : {item.dim_cadre}</p>}
+                    {parseFloat(item.dim_oeuvre.split("x")[0]) > parseFloat(item.dim_cadre.split("x")[0]) ? <>
+                       <p>dim. oeuvre : {parseFloat(item.dim_cadre.split("x")[0])}cm x {parseFloat(item.dim_cadre.split("x")[1])}cm</p>
+                    {item.dim_cadre && <p>dim. cadre : {parseFloat(item.dim_oeuvre.split("x")[0])}cm x {parseFloat(item.dim_oeuvre.split("x")[1])}cm</p>}
                     <p>technique : {item.technique}</p>
+                    </>:<>
+                    <p>dim. oeuvre : {parseFloat(item.dim_oeuvre.split("x")[0])}cm x {parseFloat(item.dim_oeuvre.split("x")[1])}cm</p>
+                    {item.dim_cadre && <p>dim. cadre : {parseFloat(item.dim_cadre.split("x")[0])}cm x {parseFloat(item.dim_cadre.split("x")[1])}cm</p>}
+                    <p>technique : {item.technique}</p></> }
+
                 </div>
                 <img src={item?.imageBase64.imageBase64} alt={item.titre} className="w-full max-h-[80vh]"/>
             
 
-                <div className="absolute bottom-2 lg:bottom-3 right-2 w-2 lg:w-5 h-2 lg:h-5"><img src={"/images/close.webp"} alt={"close"}/></div>
+                <div className="absolute top-2 lg:top-2 right-2 w-2 lg:w-5 h-2 lg:h-5"><img src={"/images/close.webp"} alt={"close"}/></div>
          </div > 
     }
 
 
-    function onFullScreen({item,bg}:{item:tableau,bg:string}){
+    function onFullScreen({item,bg}:{item?:tableau,bg:string}){
         setTableau(item);
         setIsOpen(true);
         setTableauBG(bg)
         
     }
     const FrontItems  = useMemo(()=>{
-        return tableaux?.map((tableau,pos)=>
+        let tableauOrdornée = expo?.tableauxOrder && expo?.tableauxOrder.length ? expo?.tableauxOrder.map(id=>tableaux.find(t=>t._id === id)).filter(Boolean): tableaux
+        return tableauOrdornée?.map((tableau,pos)=>
          <div className={`relative flex flex-col pb-2 rounded-2xl  flex center w-full z-[10] ${pos % 2 ? "bg-white" : "bg-snow"}`} onClick={()=>{onFullScreen({item:tableau,bg:`${pos % 2 ? "bg-white" : "bg-snow"}`})}}>
 
-            <img src={tableau.imageBase64.imageBase64} alt={tableau._id} className="w-full h-fit rounded-t-lg z-[10]"/>
-            <p className="font-mt-bold mt-2 text-center text-2xs lg:text-base z-[10]"> {tableau.titre}</p>
+            <img src={tableau?.imageBase64.imageBase64} alt={tableau?._id} className="w-full h-fit rounded-t-lg z-[10]"/>
+            <p className="font-mt-bold mt-2 text-center text-2xs lg:text-base z-[10]"> {tableau?.titre}</p>
             <img src={"/images/fullscreen.webp"} alt={"fullscreen"} className="absolute bottom-3 right-2 w-2 lg:w-5 w-2 lg:h-5 z-[10]" />
             </div> 
         )
@@ -116,10 +107,11 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
         {background}
         <div className="w-screen">
 
-            {loading && <div className="w-full h-[200px] flex center"><Loading darkMode /></div>}
+            {loading && <div className="w-full h-[calc(100vh-636px)] flex center"><Loading darkMode /></div>}
             {!loading && <ResponsiveMasonry 
+                
                 columnsCountBreakPoints={{768: 2, 996: 3, 1200: 4, 1900:5 }} >
-                <Masonry gutter="32px">{FrontItems}</Masonry>
+                <Masonry gutter="32px"  >{FrontItems}</Masonry>
             </ResponsiveMasonry>}
             <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
             <div className="fixed inset-0 flex w-screen flex items-center justify-center p-1 lg:p-4">
