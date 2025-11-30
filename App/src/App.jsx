@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import {Route,Routes} from 'react-router';
 import { ToastContainer } from 'react-toastify'
 import { CookiesProvider } from 'react-cookie';
-
+import { PrimeReactProvider } from 'primereact/api';
 import Navbar from './Component/Navbar';
 import Loading from './Component/Loading/Loading';
 import Expo from './Screens/Expo';
@@ -18,14 +18,15 @@ import AdminExpo from './Screens/Admin/Expo/Admin_Expo';
 import AdminExpoOrder from './Screens/Admin/Expo/Admin_Expo_Order';
 import AdminExpoUpdate from './Screens/Admin/Expo/Admin_Expo_Update';
 import AdminTableauUpdates from './Screens/Admin/Tableaux/Admin_Tableau_Update';
+import TailwindPR  from './Component/TailwindPR';
 function App() {
-  
   const isMobile = window.screen.width < 600;
   const [bgLoaded,setBgLoaded] = useState(false);
   const scrollRef = createRef(null);
   return (<div className={`w-screen h-screen relative flex flex-col bg-mainColor`}>
     <CookiesProvider defaultSetOptions={{ path: '/' }}>
-        <Router>
+     <PrimeReactProvider value={{unstyled:true,pt:TailwindPR}}>
+        <Router> 
           <div className='sticky top-0 z-[20]'>
             <Navbar scrollRef={scrollRef}/>
           </div>
@@ -44,7 +45,7 @@ function App() {
           <div className="relative flex flex-col overflow-y-scroll custom-scrollbar" ref={scrollRef}>
             <Suspense fallback={<div className='w-full h-full flex center'><Loading darkMode/></div>}>
               <Routes >        
-                <Route path="/" element={<Expo title='Émotions, Couleurs' />}></Route>
+                <Route path="/" element={<Expo title='6907c4962a1551fa7f9a3313' />}></Route>
                 <Route path="/expos/" element={<Expos />}></Route>
                 <Route path="/expo/:expoId" element={<Expo/>}></Route>
                 <Route path="/apropos" element={<APropos/>}></Route>
@@ -78,6 +79,7 @@ function App() {
               className={"w-fit"}
               />
         </Router>
+        </PrimeReactProvider>
       </CookiesProvider>
     </div>
   )

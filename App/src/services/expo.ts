@@ -10,8 +10,8 @@ export type Expo = {
     tableauxOrder: string[]
     
 }
-export const getExpo = async ({expo}:{expo:string})=>{
-    const res = await axios.post(`${apiUrl}/expo/getByTitle`,{expotitle:expo});
+export const getExpo = async ({expoId}:{expoId:string})=>{
+    const res = await axios.get(`${apiUrl}/expo/${expoId}`,);
     return res.data;
 }
 
@@ -19,8 +19,8 @@ export const getAllExpo = async ()=>{
     const res = await axios.get(`${apiUrl}/expo/getAll`);
     return res.data;
 }
-export const setOrderExpo = async (body:any) => {
-    const res = await axios.post(`${apiUrl}/expo/addOrder`,body);
+export const setOrderExpo = async (expoId:string,tableauxOrder:string[]) => {
+    const res = await axios.post(`${apiUrl}/expo/${expoId}/addOrder`,{tableauxOrder:tableauxOrder});
     return res;
 }
 export const UpdateExpo = async (expoId:string,body:any) => {

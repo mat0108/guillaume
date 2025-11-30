@@ -6,98 +6,11 @@ import { Dialog, DialogPanel } from "@headlessui/react";
 import {toast} from 'react-toastify';
 import { ConfirmPopup } from "../../../Component/Popup/Popup";
 
-type InputStringProps = {
-    value: string;
-    field: string;
-    setValue: Dispatch<SetStateAction<any>>
-    placeholder: string;
-    title: string;
-    warningTitle?: string;
-    classField?: string;
-    classTitle?: string;
-}
-type InputFileProps = {
-    value?: File;
-    setValue: Dispatch<SetStateAction<any>>
-    placeholder: string;
-    title: string;
-    warningTitle?: string;
-    classField?: string;
-    classTitle?: string;
-}
+import InputString from "../../../Component/Inputs/InputString";
+import InputStringArray from "../../../Component/Inputs/InputStringArray";
+import InputImage from "../../../Component/Inputs/InputFile";
 
 
-type InputStringArrayProps = {
-    value: string[];
-    pos: number;
-    field: string;
-    setValue: Dispatch<SetStateAction<any>>
-    placeholder: string;
-    title: string;
-    classField?: string;
-    classTitle?: string;
-    setPopup:Dispatch<SetStateAction<any>>,
-    setIsOpen:Dispatch<SetStateAction<any>>
-} 
-export function InputString({value,field,setValue,placeholder,title,warningTitle,classField,classTitle}:InputStringProps){
-        return <div className="w-full h-fit flex flex-col ">
-            <div className={`${classTitle ?? 'font-mt-bold text-white flex justify-between'}`}><p>{title}</p>{warningTitle && <span className="text-lightRed">{warningTitle}</span>}</div>
-            <input value={value} onChange={e=>setValue((prev: any) => ({ ...prev, [field]: e.target.value }))} placeholder={placeholder} className={`bg-white rounded-lg p-2 ${classField ?? 'font-mt-bold'}`}/>
-        </div>
-}
-function InputStringArrayItem({value,pos,field,setValue,placeholder,title,classField,classTitle}:InputStringArrayProps){
-    const ref = useRef<HTMLTextAreaElement>(null);
-    useEffect(() => {
-    if (!ref.current) return;
-    const el = ref.current;
-
-    el.style.height = "auto";               // reset
-    el.style.height = `${el.scrollHeight}px`; // new height
-}, [value]);
-    return <textarea value={value[pos]} 
-            ref={ref}
-        onInput={(e)=>{ e.currentTarget.style.height = "auto";
-        e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;}} 
-        onChange={(e) =>
-            setValue((prev: any) => {
-            const newArray = [...prev[field]]; 
-            newArray[pos] = e.target.value;    
-            return {...prev,[field]: newArray,};})} 
-            placeholder={`${placeholder}${pos+1}`}  className={`bg-white w-full text-justify rounded-lg p-2 ${classField ?? 'font-mt-bold'} min-h-4 whitespace-pre-wrap overflow-hidden  resize-none  `}/>
-}
-    
-
-function InputStringArray(props:InputStringArrayProps){
-    return <div className="w-full h-fit flex flex-col gap-2 ">
-        <p className={`${props.classTitle ?? 'font-mt-bold text-white'}`}>{props.title}</p>
-        {props.value.map((item:string,pos:number)=>
-        <div className="w-full h-full relative">
-            <InputStringArrayItem {...props} pos={pos} classField={pos === props.value.length - 1 ? "font-mt-bold pr-10":undefined}/>
-            {pos === props.value.length - 1 ? <div className="absolute top-0 right-1 w-fit h-[90%] flex center"><div className="bg-red w-8 h-8 flex center rounded-lg" onClick={()=>{props.setPopup(<ConfirmPopup text="Confirmez vous la suppression du dernier élément de la liste ?" actionYes={()=>props.value.pop()} setIsOpen={props.setIsOpen}/>);props.setIsOpen(true)}}><img src={"/images/del.webp"} alt={"del"} className="w-6 h-6"/></div></div>:""}
-        </div>
-        )}
-        <div className="w-full flex center">
-            <button className="bg-green p-2 text-white font-mt-bold rounded-lg mt-2" onClick={()=>{
-                props.setValue((prev: any) => {
-            const newArray = [...prev[props.field]]; 
-            newArray.push("")
-            return {...prev,[props.field]: newArray}})
-            }}> Ajouter un paragraphe</button>   
-        </div>
-        </div>
-}
-function InputImage({value,setValue,placeholder,title,warningTitle,classField,classTitle}:InputFileProps){
-        const fileInputRef = useRef<HTMLInputElement>(null)
-        const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        setValue(file)
-      };
-       return <div className="w-full h-fit flex flex-col ">
-            <div className={`${classTitle ?? 'font-mt-bold text-white'} flex justify-between`}><p>{title}</p>{warningTitle && <span className="text-lightRed">{warningTitle}</span>}</div>
-            <input ref={fileInputRef} type="file" accept="image/*" onClick={(e) => (e.currentTarget.value = "")} onChange={handleFile} placeholder={placeholder} className={`bg-white rounded-lg p-2 ${classField ?? 'font-mt-bold'}`}/>
-        </div>
-}
 const AdminExpoUpdate = () => {
     
     Check_Connect();
@@ -110,7 +23,7 @@ const AdminExpoUpdate = () => {
     
     async function fetchData(){
         if(params.expoId){
-            const data = await getExpo({expo: params.expoId })
+            const data = await getExpo({expoId: params.expoId })
 
             setExpo(data)}
     }
@@ -152,7 +65,7 @@ const AdminExpoUpdate = () => {
         {expo && <>
             <div className="w-full h-full flex gap-4">
                 <div className="w-1/2 h-full relative flex flex-col bg-grayBlack rounded-lg p-4 gap-8">
-                    {<InputString value={expo.title} field="title" setValue={setExpo} placeholder="Nom de l’exposition" title="Nom de l’exposition " warningTitle="NE PAS CHANGER ça casse l'app" />}
+                    {<InputString value={expo.title} field="title" setValue={setExpo} placeholder="Nom de l’exposition" title="Nom de l’exposition "  />}
                     {<InputStringArray value={expo.paragraphes} field="paragraphes" setValue={setExpo} placeholder="Paragraphe n° " title="Description de l’exposition" pos={0} setIsOpen={setIsOpen} setPopup={setPopup}/>}
                     <div className="absolute bottom-2 left-0 w-full flex center">
                         <div className="flex gap-4">

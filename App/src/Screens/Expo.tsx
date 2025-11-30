@@ -16,7 +16,7 @@ const Expo = ({title}:ExpoProps)=>{
     
         async function fetchData(){
             if(params.expoId || title){
-            const data = await getExpo({expo: title ?? params.expoId })
+            const data = await getExpo({expoId: title ?? params.expoId })
 
             setExpo(data)}
         }
@@ -81,7 +81,7 @@ const Expo = ({title}:ExpoProps)=>{
             <canvas ref={canvasRef} id="canvas" width={window.innerWidth} height={h} />
           </div> */}
         <div className="w-3/4 lg:w-2/3 h-[270px] lg:h-[520px] flex flex-col gap-2 center font-mt-bold text-justify text-[12px] sm:text-[16px]">
-            <p className="w-full text-center text-base sm:text-[50px] mb-[-8px] text-darkBlue">{params.exponame || title}</p>
+            <p className="w-full text-center text-base sm:text-[50px] mb-[-8px] text-darkBlue">{expo?.title}</p>
                 {/* <p className="w-full text-center text-base sm:text-[50px] mb-4 text-lightBlue">Guillaume Barnabé</p> */}
             <div className="flex flex-col w-[98%] sm:w-[90%] gap-4 text-[0.5rem] lg:text-[20px] ">
                 {expo && expo.paragraphes && expo.paragraphes.map((paragraphe:string,pos:number)=><p className={`${pos >= 2 ? "text-trueWhite":"text-black"}`}>{paragraphe}</p>)}

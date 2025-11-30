@@ -20,7 +20,7 @@ const AdminExpoOrder = ()=>{
         async function fetchData(){
             if(params && params.expoId){
                 const data = await getExpoCount(params.expoId);
-                const data2 = await getExpo({expo:params.expoId})
+                const data2 = await getExpo({expoId:params.expoId})
                 setExpo(data2)
                 setTotal(data.total);
             }
@@ -39,7 +39,7 @@ const AdminExpoOrder = ()=>{
                     console.log('params.expoId : ', params.expoId)
                     if(params && params.expoId){
                         for (let i = 1; i <= pages; i++) {
-                            fetchPromises.push(getTableauByExpo({ expo:params.expoId, page: i, limit }));
+                            fetchPromises.push(getTableauByExpo({ expoId:params.expoId, page: i, limit }));
                         }
                     }
     
@@ -76,15 +76,17 @@ const AdminExpoOrder = ()=>{
     },[items,tableaux,loading])
     function updateClick(){
         async function fetchData(){
-            const data = await setOrderExpo({expotitle:params.expoId,tableauxOrder:items})
-            if(data.status === 200){
-                toast.success(data.data.message)
+            if(params.expoId && items?.length){
+                const data = await setOrderExpo(params.expoId,items)
+                if(data.status === 200){
+                    toast.success(data.data.message)
+                }
             }
         }
         fetchData()
     }
     return <div className="w-screen bg-mainColor flex flex-col center p-4 gap-4 text-white font-mt-bold">
-      <div className="relative w-full text-center text-2xl">{params.expoId}
+      <div className="relative w-full text-center text-2xl">{expo?.title}
         <div className="absolute top-2 right-10 text-lg bg-green p-2 rounded-xl" onClick={()=>updateClick()}>Mettre à jour l'ordre des tableaux</div>
 
       </div>

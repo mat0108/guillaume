@@ -4,11 +4,14 @@ import { getExpoCount, getTableauByExpo, getTableauById, getTableaux, rotateTabl
 import Loading from "../../../Component/Loading/Loading";
 
 import {toast} from 'react-toastify';
-import { InputString } from "../Expo/Admin_Expo_Update";
 import { ConfirmPopup } from "../../../Component/Popup/Popup";
 import { Dialog, DialogPanel } from "@headlessui/react";
-import { Expo, getExpo } from "../../../services/expo";
-const DisplayTableau = ({tableaux,pos,setPopup,setIsOpen}:{tableaux:tableau[],pos:number, setPopup:Dispatch<SetStateAction<any>>;setIsOpen:Dispatch<SetStateAction<any>>}) => {
+import { Expo, getAllExpo, getExpo } from "../../../services/expo";
+import InputString from "../../../Component/Inputs/InputString";
+import { dropDownProps } from "../../../Component/Inputs/dropDownMenu";
+import DropDownMenu from "../../../Component/Inputs/dropDownMenu";
+
+const DisplayTableau = ({tableaux,pos,setPopup,setIsOpen,dropDownItems}:{tableaux:tableau[],pos:number, setPopup:Dispatch<SetStateAction<any>>;setIsOpen:Dispatch<SetStateAction<any>>,dropDownItems:dropDownProps[]}) => {
     const [image,setImage] = useState<File>()
     const [tableau,setTableau] = useState<tableau>(tableaux[pos])
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -31,6 +34,9 @@ const DisplayTableau = ({tableaux,pos,setPopup,setIsOpen}:{tableaux:tableau[],po
         setPopup(<ConfirmPopup text="Est que vous etes sur de mettre a jour l'image du tableau ? " setIsOpen={setIsOpen} actionYes={()=>{handleFile(file);setPopup(null)}}/>)
         setIsOpen(true)
     };
+    const onChangeDropdown = (e:any)=>{
+        setTableau((prev: any) => ({ ...prev, ["expos"]: e }))
+    }
 
     async function rotateImage(angle:number) {
         const res = await rotateTableau({tableauId:tableau._id,angle})
@@ -46,6 +52,7 @@ const DisplayTableau = ({tableaux,pos,setPopup,setIsOpen}:{tableaux:tableau[],po
             dim_oeuvre: tableau.dim_oeuvre,
             prix:tableau.prix,
             date:tableau.date,
+            expos:tableau.expos
             
         }})
         if(res.status === 200){
@@ -90,6 +97,11 @@ const DisplayTableau = ({tableaux,pos,setPopup,setIsOpen}:{tableaux:tableau[],po
             <InputString field="prix" value={tableau.prix} setValue={setTableau} placeholder="Prix du tableau" title="Prix du tableau"  />
             <InputString field="date" value={tableau.date} setValue={setTableau} placeholder="mm/yyyy ou yyyy" title="Date du tableau" />
         </div>
+        <div className="w-[300px] flex flex-col  ">
+            <p className="w-full font-mt-bold text-white">Exposition</p>
+            <DropDownMenu options={dropDownItems} selectedOptions={tableau.expos} setSelectedOptions={onChangeDropdown}/>
+            
+        </div>
         <div className="flex flex-col center gap-4 ">
             <button className="bg-green p-2 text-white font-mt-bold rounded-lg mt-2" onClick={()=>setPopup(<ConfirmPopup text="Confirmez vous la mise à jour des ses informations ?" actionYes={()=>updateData()} setIsOpen={setIsOpen}/>)}>Update les informations</button>
             <button className="bg-red p-2 text-white font-mt-bold rounded-lg mt-2 " onClick={()=>fetchData()}>Reset les informations</button>
@@ -104,6 +116,7 @@ const AdminTableauUpdates = ()=>{
     const [loading,setLoading] = useState<boolean>(false);
     const [tableaux,setTableaux] = useState<tableau[]>()
     const [expo,setExpo] = useState<Expo>()
+    const [expos,setExpos] = useState<Expo[]>()
     const [isOpen,setIsOpen] = useState<boolean>(false);
     const [popup,setPopup] = useState<any>()
     const params = useParams();
@@ -112,11 +125,15 @@ const AdminTableauUpdates = ()=>{
     useEffect(()=>{
         async function fetchData(){
             const data = await getExpoCount(params?.expoId);
+            const data2 = await getAllExpo()
+            console.log('data2 : ', data2)
             if(params.expoId){
-                const data2 = await getExpo({expo:params.expoId})
-                console.log('data2 : ', data2)
-                setExpo(data2)
+                let expo = data2.filter((expo:Expo)=>expo._id === params.expoId)
+                if(expo.length === 1){
+                    setExpo(expo[0])
+                }
             }
+            setExpos(data2);
             setTotal(data.total);
         } 
         fetchData()
@@ -132,7 +149,7 @@ const AdminTableauUpdates = ()=>{
     
                     for (let i = 1; i <= pages; i++) {
                         if (params.expoId) {
-                            fetchPromises.push(getTableauByExpo({ expo:params.expoId, page: i, limit }));
+                            fetchPromises.push(getTableauByExpo({ expoId:params.expoId, page: i, limit }));
                         } else {
                             fetchPromises.push(getTableaux({ page: i, limit }));
                         }
@@ -163,11 +180,11 @@ const AdminTableauUpdates = ()=>{
         }, [total, expo , params, limit])
 
     const elem = useMemo(()=>{
-        return <div className="w-full h-full flex flex-col bg-mainColor overflow-auto custom-scrollbar gap-4">
-            {!loading && tableaux && tableaux.map((tableau:tableau,pos:number)=><DisplayTableau tableaux={tableaux} pos={pos} setPopup={setPopup} setIsOpen={setIsOpen} key={tableau._id}/>)}
+        return <div className="w-full min-h-screen h-full flex flex-col bg-mainColor overflow-auto custom-scrollbar gap-4">
+            {!loading && tableaux && tableaux.map((tableau:tableau,pos:number)=><DisplayTableau tableaux={tableaux} pos={pos} setPopup={setPopup} setIsOpen={setIsOpen} key={tableau._id} dropDownItems={expos?.map((expo:Expo)=>{return {value:expo._id,name:expo.title}}) as dropDownProps[]} />)}
             {loading && <div className="w-full h-[400px] lg:h-[800px] flex center"><Loading darkMode/></div>} 
         </div>
-    },[tableaux])
+    },[tableaux,expos])
     useEffect(()=>{
         if(popup){
             setIsOpen(true)

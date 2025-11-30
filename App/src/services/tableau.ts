@@ -32,7 +32,7 @@ export const getTableauById = async ({id}:{id:string}) => {
     const res = await axios.get(`${apiUrl}/tableau/getById/${id}`);
     return res;
 }
-export const getTableauByExpo = async (body:{expo:string,page:number,limit:number}):Promise<tableauResponse>=>{
+export const getTableauByExpo = async (body:{expoId:string,page:number,limit:number}):Promise<tableauResponse>=>{
     const res = await axios.post<tableauResponse>(`${apiUrl}/tableau/getByExpo`,body);
     return res.data;
 }
@@ -57,8 +57,8 @@ export const getImageById = async ({id}:{id:string}) => {
     return res.data;
 }
 
-export const getExpoCount = async(exponame?:string) =>{
-    const res = await axios.post(`${apiUrl}/tableau/counts`,{expo:exponame})
+export const getExpoCount = async(expoId?:string) =>{
+    const res = await axios.post(`${apiUrl}/tableau/counts`,{expoId:expoId})
     return res.data;
 }
 export const updateTableau = async({tableauId,body}:{tableauId?:string,body:any}) =>{

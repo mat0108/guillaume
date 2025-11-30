@@ -21,9 +21,9 @@ const AdminExpo = ()=>{
         {expos && expos.map(expo=><div className="w-3/4 h-[70px] flex items-center justify-between bg-spaceBlue  rounded-lg p-4 gap-4  ">
             <p>{expo.title}</p>
             <div className="flex gap-4">
-                <Link to={`/admin/expo/${expo.title}/update`} className="w-fit h-fit p-2 bg-steelBlue rounded-lg "> Modifier les informations </Link>
-                <Link to={`/admin/expo/${expo.title}/order`} className="w-fit h-fit p-2 bg-blackDarked rounded-lg "> Modifier l'ordre des tableaux</Link>
-                <Link to={`/admin/tableaux/${expo.title}`} className="w-fit h-fit p-2 bg-delftBlue rounded-lg "> Modifier les tableaux de cette expo</Link>
+                <Link to={`/admin/expo/${expo._id}/update`} className="w-fit h-fit p-2 bg-steelBlue rounded-lg "> Modifier les informations </Link>
+                <Link to={`/admin/expo/${expo._id}/order`} className="w-fit h-fit p-2 bg-blackDarked rounded-lg "> Modifier l'ordre des tableaux</Link>
+                <Link to={`/admin/tableaux/${expo._id}`} className="w-fit h-fit p-2 bg-delftBlue rounded-lg "> Modifier les tableaux de cette expo</Link>
             
             </div>
         </div>

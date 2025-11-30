@@ -31,7 +31,7 @@ const Expos = ()=>{
                             </div>
                         </div>
                         <div className="w-full flex center mt-2 text-2xs lg:text-base">
-                            {LinkButton("Voir les tableaux",`/expo/${expo.title}`)}
+                            {LinkButton("Voir les tableaux",`/expo/${expo._id}`)}
 
                         </div>
                     </div>    

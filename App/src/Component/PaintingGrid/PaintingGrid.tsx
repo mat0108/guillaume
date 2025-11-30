@@ -23,7 +23,7 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
     
     useEffect(()=>{
         async function fetchData(){
-            const data = await getExpoCount(expo?.title);
+            const data = await getExpoCount(expo?._id);
             setTotal(data.total);
         } 
         fetchData()
@@ -40,8 +40,9 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
                 const fetchPromises = [];
 
                 for (let i = 1; i <= pages; i++) {
+                    console.log('expo : ', expo)
                     if (expo) {
-                        fetchPromises.push(getTableauByExpo({ expo:expo.title, page: i, limit }));
+                        fetchPromises.push(getTableauByExpo({ expoId:expo._id, page: i, limit }));
                     } else {
                         fetchPromises.push(getTableaux({ page: i, limit }));
                     }
