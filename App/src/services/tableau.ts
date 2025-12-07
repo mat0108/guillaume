@@ -12,7 +12,7 @@ export type tableau = {
     titre: string;
     technique:   string;
     prix:  string;
-    expos: string[],
+    expos: string[] ,
     imageBase64: imageTableau;
     date: string;
 }
@@ -37,16 +37,20 @@ export const getTableauByExpo = async (body:{expoId:string,page:number,limit:num
     return res.data;
 }
 type TableauProps = {
-    _id:string;
     dim_oeuvre:string;
     dim_cadre:string;
     titre:string;
     technique:string;
     prix:string;
+    expos:string[];
+    date:string;
 }
-export const createTableau = async (tableau:TableauProps) => {
-    const res = await axios.post(`${apiUrl}/tableau/create`,tableau);
-    return res.data;
+export const createTableau = async ({tableau,file}:{tableau:TableauProps,file:File}) => {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("tableau", JSON.stringify(tableau));
+    const res = await axios.post(`${apiUrl}/tableau/create`,form,{headers: { "Content-Type": "multipart/form-data" }});
+    return res;
 }
 export const addImages = async ({images}:{images: File[]})=>{
     const res = await axios.post(`${apiUrl}/tableau/addMultipleImage`,images);

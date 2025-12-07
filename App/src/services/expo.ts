@@ -5,9 +5,11 @@ export type Expo = {
     title: string,
     paragraphes: string[],
     tableauAffiche: string,
-    tableauAfficheRatio: string;
-    paragrapheIndex: number
-    tableauxOrder: string[]
+    tableauAfficheRatio: string,
+    paragrapheIndex: number,
+    tableauxOrder: string[],
+    lieu:string,
+    date:string
     
 }
 export const getExpo = async ({expoId}:{expoId:string})=>{

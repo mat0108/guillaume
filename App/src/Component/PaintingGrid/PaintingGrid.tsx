@@ -40,7 +40,6 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
                 const fetchPromises = [];
 
                 for (let i = 1; i <= pages; i++) {
-                    console.log('expo : ', expo)
                     if (expo) {
                         fetchPromises.push(getTableauByExpo({ expoId:expo._id, page: i, limit }));
                     } else {
@@ -64,19 +63,22 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
             if(total > 0 && limit){fetchAll();}
         }
     }, [total, expo, limit]);
+
     function BackItem({item,background}:{item:tableau,background:string}){
         return <div  className={`max-w-[90vw] lg:max-w-[50vw]  relative flex flex-col p-4 rounded-2xl ${background ?? 'bg-lightGray'} flex center`} onClick={()=>{setIsOpen(false)}}>
             <p className="font-mt-bold lg:mt-2 text-center text-xs lg:text-lg"> {item.titre}</p>
             <div className={`flex flex-row justify-around text-3xs lg:text-base ${item.dim_cadre ? "w-[100%] lg:w-[80%]":"w-[90%] lg:w-[75%]"}`}>
-                    {parseFloat(item.dim_oeuvre.split("x")[0]) > parseFloat(item.dim_cadre.split("x")[0]) ? <>
-                       <p>dim. oeuvre : {parseFloat(item.dim_cadre.split("x")[0])}cm x {parseFloat(item.dim_cadre.split("x")[1])}cm</p>
-                    {item.dim_cadre && <p>dim. cadre : {parseFloat(item.dim_oeuvre.split("x")[0])}cm x {parseFloat(item.dim_oeuvre.split("x")[1])}cm</p>}
-                    <p>technique : {item.technique}</p>
+                    {parseFloat(item.dim_oeuvre.toLowerCase().split("x")[0]) > parseFloat(item.dim_cadre.toLowerCase().split("x")[0]) ? <>
+                    {item.dim_oeuvre && <p>dim. œuvre : {parseFloat(item.dim_cadre.toLowerCase().split("x")[0])}cm x {parseFloat(item.dim_cadre.toLowerCase().split("x")[1])}cm</p>}
+                    {item.dim_cadre && <p>dim. cadre : {parseFloat(item.dim_oeuvre.toLowerCase().split("x")[0])}cm x {parseFloat(item.dim_oeuvre.toLowerCase().split("x")[1])}cm</p>}
+                    {item.technique && <p>technique : {item.technique}</p>}
+                    {item.prix && <p>prix : {item.prix} {Number.isNaN(parseInt(item.prix)) ? "":"€"} </p>}
                     </>:<>
-                    <p>dim. oeuvre : {parseFloat(item.dim_oeuvre.split("x")[0])}cm x {parseFloat(item.dim_oeuvre.split("x")[1])}cm</p>
-                    {item.dim_cadre && <p>dim. cadre : {parseFloat(item.dim_cadre.split("x")[0])}cm x {parseFloat(item.dim_cadre.split("x")[1])}cm</p>}
-                    <p>technique : {item.technique}</p></> }
-
+                    {item.dim_oeuvre && <p>dim. œuvre : {parseFloat(item.dim_oeuvre.toLowerCase().split("x")[0])}cm x {parseFloat(item.dim_oeuvre.toLowerCase().split("x")[1])}cm</p>}
+                    {item.dim_cadre && <p>dim. cadre : {parseFloat(item.dim_cadre.toLowerCase().split("x")[0])}cm x {parseFloat(item.dim_cadre.toLowerCase().split("x")[1])}cm</p>}
+                    {item.technique && <p>technique : {item.technique}</p>}
+                    {item.prix && <p>prix : {item.prix} {Number.isNaN(parseInt(item.prix)) ? "":"€"} </p>}</> }
+                    
                 </div>
                 <img src={item?.imageBase64.imageBase64} alt={item.titre} className="w-full max-h-[80vh]"/>
             
@@ -93,8 +95,16 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
         
     }
     const FrontItems  = useMemo(()=>{
-        let tableauOrdornée = expo?.tableauxOrder && expo?.tableauxOrder.length ? expo?.tableauxOrder.map(id=>tableaux.find(t=>t._id === id)).filter(Boolean): tableaux
-        return tableauOrdornée?.map((tableau,pos)=>
+            const order = expo?.tableauxOrder ?? [];
+            const tableauOrdonnée = [...tableaux].sort((a, b) => {
+                const ia = order.indexOf(a._id);
+                const ib = order.indexOf(b._id);
+                if (ia !== -1 && ib !== -1) return ia - ib;
+                if (ia !== -1) return -1;
+                if (ib !== -1) return 1;
+                return 0;
+            });
+        return tableauOrdonnée?.map((tableau,pos)=>
          <div className={`relative flex flex-col pb-2 rounded-2xl  flex center w-full z-[10] ${pos % 2 ? "bg-white" : "bg-snow"}`} onClick={()=>{onFullScreen({item:tableau,bg:`${pos % 2 ? "bg-white" : "bg-snow"}`})}}>
 
             <img src={tableau?.imageBase64.imageBase64} alt={tableau?._id} className="w-full h-fit rounded-t-lg z-[10]"/>
@@ -108,7 +118,7 @@ const PaintingGrid = ({expo,background}:PaintingGridProps)=>{
         {background}
         <div className="w-screen">
 
-            {loading && <div className="w-full h-[calc(100vh-636px)] flex center"><Loading darkMode /></div>}
+            {loading && <div className="w-full h-[calc(100vh-270px) lg:h-[calc(100vh-636px)] flex center"><Loading darkMode /></div>}
             {!loading && <ResponsiveMasonry 
                 
                 columnsCountBreakPoints={{768: 2, 996: 3, 1200: 4, 1900:5 }} >

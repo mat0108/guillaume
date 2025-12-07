@@ -10,13 +10,14 @@ const AdminLogin = () => {
     const [cookies,setCookies] = useCookies();
     const navigate = useNavigate();
     useEffect(()=>{
+        console.log('cookies : ', cookies)
         if(cookies && cookies.user && cookies.user.isLogin){
             navigate("/admin/main")
         }
     },[cookies])
     function Login(){
         if(login === verif_login && password === verif_password){
-            setCookies("user", {login:login,password:password,isLogin:true}, { path: "/" });
+            setCookies("user", {isLogin:true}, { path: "/" , maxAge: 14 * 24 * 60 * 60});
             navigate("/admin/main")
         }else{
             toast.warning("Mauvais login ou password")

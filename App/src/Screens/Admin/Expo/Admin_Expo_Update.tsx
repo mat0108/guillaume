@@ -30,7 +30,7 @@ const AdminExpoUpdate = () => {
     async function UpdateInfo() {
         if(expo){
 
-            const res = await UpdateExpo(expo?._id,{title:expo?.title, paragraphes: expo?.paragraphes})
+            const res = await UpdateExpo(expo?._id,{title:expo?.title, paragraphes: expo?.paragraphes,lieu:expo?.lieu,date:expo?.date})
             if(res.status === 200){
                 toast.info(res.data.message)
             }
@@ -65,7 +65,15 @@ const AdminExpoUpdate = () => {
         {expo && <>
             <div className="w-full h-full flex gap-4">
                 <div className="w-1/2 h-full relative flex flex-col bg-grayBlack rounded-lg p-4 gap-8">
-                    {<InputString value={expo.title} field="title" setValue={setExpo} placeholder="Nom de l’exposition" title="Nom de l’exposition "  />}
+                    {<InputString value={expo.title} field="title" setValue={setExpo} placeholder="Nom de l’exposition" title="Nom de l’exposition " isObject />}
+                    <div className="w-full flex flex-row gap-4 ">
+                        <div className="w-1/2">
+                            {<InputString value={expo.lieu} field="lieu" setValue={setExpo} placeholder="Lieu de l’exposition" title="Lieu de l’exposition " isObject />}
+                        </div>
+                        <div className="w-1/2">
+                            {<InputString value={expo.date} field="date" setValue={setExpo} placeholder="Date de l’exposition" title="Date de l’exposition " isObject />}
+                        </div>
+                    </div>
                     {<InputStringArray value={expo.paragraphes} field="paragraphes" setValue={setExpo} placeholder="Paragraphe n° " title="Description de l’exposition" pos={0} setIsOpen={setIsOpen} setPopup={setPopup}/>}
                     <div className="absolute bottom-2 left-0 w-full flex center">
                         <div className="flex gap-4">
@@ -77,7 +85,7 @@ const AdminExpoUpdate = () => {
                 <div className="w-1/2 h-full relative flex flex-col bg-grayBlack rounded-lg p-4 gap-8"> 
                     {imageElement}
                     <div>
-                        {<InputString value={expo.tableauAfficheRatio} field="tableauAfficheRatio" setValue={setExpo} placeholder="le ratio d'affichage de l'image" title="Ratio d'affichage de l'image : 21/9, 14/21, 1/1 ... " warningTitle="(NE PAS RETIRER LE KEY `aspect-`)"/>}
+                        {<InputString value={expo.tableauAfficheRatio} field="tableauAfficheRatio" setValue={setExpo} placeholder="le ratio d'affichage de l'image" title="Ratio d'affichage de l'image : 21/9, 14/21, 1/1 ... " warningTitle="(NE PAS RETIRER LE KEY `aspect-`)" isObject/>}
                     </div>
                     <InputImage value={image} setValue={setImage} placeholder="" title="Changer l'affiche de l’exposition" />
                     <div className="absolute bottom-2 left-0 w-full flex center">

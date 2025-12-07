@@ -25,7 +25,7 @@ const TailwindPR = {
                 'bg-spaceBlue hover:bg-hoverColor ':  context.selected
             })
         }),
-        header:"text-white",
+        header:"text-white flex justify-between",
         label:"flex flex-col gap-2",
         token:"bg-spaceBlue border-2 border-white flex flex flex-row gap-2 w-fit p-2 rounded-lg ",
         removetokenicon:"mt-2",

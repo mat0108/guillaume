@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://guillaumebarnabe.fr/sitemap.xml

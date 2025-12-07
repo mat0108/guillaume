@@ -1,3 +1,5 @@
+import { Helmet } from "react-helmet-async";
+
 const APropos = () => {
     
     const isMobile = window.screen.width < 600;
@@ -17,6 +19,13 @@ const APropos = () => {
         </div>
     }
     return <div className="w-full h-full flex flex-col gap-4 bg-mainColor overflow-auto">
+        <Helmet >
+            <title>À propos – Guillaume Barnabé</title>
+            <meta
+                name="description"
+                content="Biographie et parcours de Guillaume Barnabé, artiste peintre contemporain."
+            />
+            </Helmet>
         {isMobile ? <div className="w-full h-full flex flex-col gap-4 bg-mainColor">
             <div className="w-full flex flex-row gap-4">
                 <div className="w-1/2 h-full flex flex-col gap-4">

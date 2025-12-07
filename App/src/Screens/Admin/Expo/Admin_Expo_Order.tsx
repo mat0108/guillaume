@@ -48,7 +48,15 @@ const AdminExpoOrder = ()=>{
                         // flatten all tableaux into one array
                         const allTableaux = results.flatMap(res => res.tableaux);
                         setTableaux(allTableaux);
-                        let tableauOrdonnée = expo?.tableauxOrder && expo?.tableauxOrder.length ? expo?.tableauxOrder.map(id=>allTableaux.find(t=>t._id === id)).filter((t): t is tableau => Boolean(t)) : allTableaux
+                        const order = expo?.tableauxOrder ?? [];
+                        const tableauOrdonnée = [...allTableaux].sort((a, b) => {
+                            const ia = order.indexOf(a._id);
+                            const ib = order.indexOf(b._id);
+                            if (ia !== -1 && ib !== -1) return ia - ib;
+                            if (ia !== -1) return -1;
+                            if (ib !== -1) return 1;
+                            return 0;
+                        });
                         setItems(tableauOrdonnée.map(item=>item._id))
                     
                         
@@ -85,13 +93,12 @@ const AdminExpoOrder = ()=>{
         }
         fetchData()
     }
-    return <div className="w-screen bg-mainColor flex flex-col center p-4 gap-4 text-white font-mt-bold">
-      <div className="relative w-full text-center text-2xl">{expo?.title}
+    return <div className="w-screen bg-mainColor flex flex-col center p-4 gap-4 text-white font-mt-bold ">
+        <div className="w-full text-center text-2xl">{expo?.title}</div>
         <div className="absolute top-2 right-10 text-lg bg-green p-2 rounded-xl" onClick={()=>updateClick()}>Mettre à jour l'ordre des tableaux</div>
 
-      </div>
-      {elem}
-    </div>
+        {elem}
+        </div>
 }
 
 export default AdminExpoOrder;

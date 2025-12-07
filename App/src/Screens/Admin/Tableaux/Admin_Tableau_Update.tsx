@@ -34,9 +34,7 @@ const DisplayTableau = ({tableaux,pos,setPopup,setIsOpen,dropDownItems}:{tableau
         setPopup(<ConfirmPopup text="Est que vous etes sur de mettre a jour l'image du tableau ? " setIsOpen={setIsOpen} actionYes={()=>{handleFile(file);setPopup(null)}}/>)
         setIsOpen(true)
     };
-    const onChangeDropdown = (e:any)=>{
-        setTableau((prev: any) => ({ ...prev, ["expos"]: e }))
-    }
+
 
     async function rotateImage(angle:number) {
         const res = await rotateTableau({tableauId:tableau._id,angle})
@@ -86,20 +84,20 @@ const DisplayTableau = ({tableaux,pos,setPopup,setIsOpen,dropDownItems}:{tableau
            
         </div>
         <div className="w-[400px] flex flex-col center gap-4 ">
-            <InputString field="titre" value={tableau.titre} setValue={setTableau} placeholder="Le titre du tableau" title="Titre du tableau"/>
-            <InputString field="technique" value={tableau.technique} setValue={setTableau} placeholder="La technique du tableau" title="Technique du tableau"/>
+            <InputString field="titre" value={tableau.titre} setValue={setTableau} placeholder="Le titre du tableau" title="Titre du tableau" isObject/>
+            <InputString field="technique" value={tableau.technique} setValue={setTableau} placeholder="La technique du tableau" title="Technique du tableau" isObject/>
         </div>
         <div className="w-[200px] flex flex-col center  gap-4 ">
-             <InputString field="dim_oeuvre" value={tableau.dim_oeuvre} setValue={setTableau} placeholder="Dimension de l'oeuvre" title="Dimension de l'oeuvre" />
-            <InputString field="dim_cadre" value={tableau.dim_cadre} setValue={setTableau} placeholder="Dimension du cadre" title="Dimension du cadre"  />
+             <InputString field="dim_oeuvre" value={tableau.dim_oeuvre} setValue={setTableau} placeholder="Dimension de l'oeuvre" title="Dimension de l'oeuvre" isObject/>
+            <InputString field="dim_cadre" value={tableau.dim_cadre} setValue={setTableau} placeholder="Dimension du cadre" title="Dimension du cadre" isObject />
         </div>
         <div className="w-[200px] flex flex-col center  gap-4 ">
-            <InputString field="prix" value={tableau.prix} setValue={setTableau} placeholder="Prix du tableau" title="Prix du tableau"  />
-            <InputString field="date" value={tableau.date} setValue={setTableau} placeholder="mm/yyyy ou yyyy" title="Date du tableau" />
+            <InputString field="prix" value={tableau.prix} setValue={setTableau} placeholder="Prix du tableau" title="Prix du tableau" isObject />
+            <InputString field="date" value={tableau.date} setValue={setTableau} placeholder="mm/yyyy ou yyyy" title="Date du tableau" isObject/>
         </div>
         <div className="w-[300px] flex flex-col  ">
             <p className="w-full font-mt-bold text-white">Exposition</p>
-            <DropDownMenu options={dropDownItems} selectedOptions={tableau.expos} setSelectedOptions={onChangeDropdown}/>
+            <DropDownMenu options={dropDownItems} selectedOptions={tableau.expos ?? []} setSelectedOptions={setTableau} optionLabel="Expositions" pos={pos} isObject field="expos"/>
             
         </div>
         <div className="flex flex-col center gap-4 ">
@@ -126,7 +124,7 @@ const AdminTableauUpdates = ()=>{
         async function fetchData(){
             const data = await getExpoCount(params?.expoId);
             const data2 = await getAllExpo()
-            console.log('data2 : ', data2)
+           
             if(params.expoId){
                 let expo = data2.filter((expo:Expo)=>expo._id === params.expoId)
                 if(expo.length === 1){
@@ -160,7 +158,15 @@ const AdminTableauUpdates = ()=>{
                         // flatten all tableaux into one array
                         const allTableaux = results.flatMap(res => res.tableaux);
                         if(params?.expoId && expo){
-                            let tableauOrdonnée = expo?.tableauxOrder && expo?.tableauxOrder.length ? expo?.tableauxOrder.map(id=>allTableaux.find(t=>t._id === id)).filter((t): t is tableau => Boolean(t)) : allTableaux
+                            const order = expo?.tableauxOrder ?? [];
+                            const tableauOrdonnée = [...allTableaux].sort((a, b) => {
+                                const ia = order.indexOf(a._id);
+                                const ib = order.indexOf(b._id);
+                                if (ia !== -1 && ib !== -1) return ia - ib;
+                                if (ia !== -1) return -1;
+                                if (ib !== -1) return 1;
+                                return 0;
+                            });
                             setTableaux(tableauOrdonnée);
                         }else{
                             setTableaux(allTableaux);

@@ -84,7 +84,7 @@ const Expo = ({title}:ExpoProps)=>{
             <p className="w-full text-center text-base sm:text-[50px] mb-[-8px] text-darkBlue">{expo?.title}</p>
                 {/* <p className="w-full text-center text-base sm:text-[50px] mb-4 text-lightBlue">Guillaume Barnabé</p> */}
             <div className="flex flex-col w-[98%] sm:w-[90%] gap-4 text-[0.5rem] lg:text-[20px] ">
-                {expo && expo.paragraphes && expo.paragraphes.map((paragraphe:string,pos:number)=><p className={`${pos >= 2 ? "text-trueWhite":"text-black"}`}>{paragraphe}</p>)}
+                {expo && expo.paragraphes && expo.paragraphes.map((paragraphe:string,pos:number)=><p className={`${pos >= 1 ? "text-trueWhite":"text-black"}`} key={`paragraphe-${pos}`}>{paragraphe}</p>)}
             </div>
 
         
